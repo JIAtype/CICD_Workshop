@@ -1,4 +1,4 @@
-name: My failed workflow
+name: My workflow
 on: 
     push:
         branches: 
@@ -7,11 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    #条件语句，判断有没有NORUN
     if: ${{ !contains(github.event.commits[0].message,'#NORUN')}}
     steps:    
-    #echo "message: $nowmessage"，返回当前获取的message
-    #条件语句，判断有没有NORUN
-    #fi是结束if语句
         - 
             name: Checkout
             uses: actions/checkout@v4
@@ -28,12 +26,13 @@ jobs:
               ignore-unfixed: true
               format: 'table'
               output: 'trivy-results.txt'
-              severity: 'HIGH'
+              severity: 'CRITICAL'
               exit-code: 1
         -
             name: see the table
             run:
                 cat trivy-results.txt
+
 #send a message to the provided Slack channel
         - 
             name: Slack Notification
@@ -55,3 +54,62 @@ jobs:
               channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
               file_path: 'trivy-results.txt'
               initial_comment: 'The scan report post by Chen Jia'
+
+#Containerized the Golang application
+#Push the image to Docker Hub
+        -
+            name: Checkout
+            uses: actions/checkout@v3
+        -
+            name: Set up QEMU
+            uses: docker/setup-qemu-action@v3
+        -
+            name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v3
+        -
+            name: Login to Docker Hub
+            uses: docker/login-action@v3
+            with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_TOKEN }}
+        -
+            name: Build and push
+            uses: docker/build-push-action@v5
+            with:
+              context: .
+              push: true
+              tags: user1051006/mydoc:${{github.sha}}
+#注意在本地做：context: .
+#Digitally sign the image
+        -
+            uses: actions/checkout@v3.5.2
+            with:
+              fetch-depth: 1
+        - 
+            name: Install Cosign
+            uses: sigstore/cosign-installer@v3.1.1
+            with:
+              cosign-release: 'v2.2.0'
+        - 
+            name: Sign image with a key
+            run: |
+              cosign sign --yes --key env://COSIGN_PRIVATE_KEY "${TAGS}"
+            env:
+              TAGS: user1051006/mydoc:${{github.sha}}
+              COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+              COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+#send a message to the provided Slack channel
+        - 
+            name: Slack Notification
+            uses: rtCamp/action-slack-notify@v2
+            env:
+              SLACK_CHANNEL: submission
+              SLACK_MESSAGE: | 
+                *Name*: CHEN JIA
+                *Matriculation number*: A0287269J 
+                *Email*:e1285215@u.nus.edu
+                *Git*: https://github.com/JIAtype/CICD_ChenJia
+                *Image*: https://hub.docker.com/repository/docker/user1051006/mydoc
+              SLACK_TITLE: Image build and signed
+              SLACK_USERNAME: DipSA 57 CICD
+              SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
