@@ -26,7 +26,7 @@ jobs:
               ignore-unfixed: true
               format: 'table'
               output: 'trivy-results.txt'
-              severity: 'CRITICAL'
+              severity: 'HIGH'
               exit-code: 1
         -
             name: see the table
@@ -40,6 +40,7 @@ jobs:
             uses: rtCamp/action-slack-notify@v2
             env:
               SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+              SLACK_COLOR: ${{job.status}}
               SLACK_MESSAGE: Failed trivy scan, see uploaded report
               SLACK_TITLE: Scan failed - Fred
               SLACK_USERNAME: DipSA 57 CICD
@@ -104,6 +105,7 @@ jobs:
             uses: rtCamp/action-slack-notify@v2
             env:
               SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+              SLACK_COLOR: ${{job.status}}
               SLACK_MESSAGE: | 
                 *Name*: CHEN JIA
                 *Matriculation number*: A0287269J 
