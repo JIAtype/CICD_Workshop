@@ -103,7 +103,7 @@ jobs:
             name: Slack Notification
             uses: rtCamp/action-slack-notify@v2
             env:
-              SLACK_CHANNEL: submission
+              SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
               SLACK_MESSAGE: | 
                 *Name*: CHEN JIA
                 *Matriculation number*: A0287269J 
