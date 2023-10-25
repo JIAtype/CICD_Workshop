@@ -26,7 +26,7 @@ jobs:
               ignore-unfixed: true
               format: 'table'
               output: 'trivy-results.txt'
-              severity: 'CRITICAL'
+              severity: 'HIGH'
               exit-code: 1
         -
             name: see the table
@@ -110,7 +110,7 @@ jobs:
                 *Name*: CHEN JIA
                 *Matriculation number*: A0287269J 
                 *Email*:e1285215@u.nus.edu
-                *Git*: https://github.com/JIAtype/CICD_ChenJia
+                *Git*: https://github.com/${{github.repository}}
                 *Image*: https://hub.docker.com/repository/docker/user1051006/mydoc
               SLACK_TITLE: Image build and signed
               SLACK_USERNAME: DipSA 57 CICD
