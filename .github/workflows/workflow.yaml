@@ -42,7 +42,7 @@ jobs:
               SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
               SLACK_COLOR: ${{job.status}}
               SLACK_MESSAGE: Failed trivy scan, see uploaded report
-              SLACK_TITLE: Scan failed - Fred
+              SLACK_TITLE: Scan failed - Chen Jia
               SLACK_USERNAME: DipSA 57 CICD
               SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 #Upload scan report
@@ -107,7 +107,7 @@ jobs:
               SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
               SLACK_COLOR: ${{job.status}}
               SLACK_MESSAGE: | 
-                *Name*: CHEN JIA
+                *Name*: Chen Jia
                 *Matriculation number*: A0287269J 
                 *Email*:e1285215@u.nus.edu
                 *Git*: https://github.com/${{github.repository}}
